@@ -25,6 +25,20 @@ const AUTO_DELETE_IMAGES_RESOURCE_TYPE = 'Custom::ECRAutoDeleteImages';
 const AUTO_DELETE_IMAGES_TAG = 'aws-cdk:auto-delete-images';
 
 /**
+ * The tag mutability setting for your repository.
+ */
+export enum ImageTagMutability {
+  /**
+   * allow image tags to be overwritten.
+   */
+  MUTABLE = 'MUTABLE',
+  /**
+   * all image tags within the repository will be immutable which will prevent them from being overwritten.
+   */
+  IMMUTABLE = 'IMMUTABLE'
+}
+
+/**
  * Represents an ECR repository.
  */
 export interface IRepository extends IResource {
@@ -570,6 +584,16 @@ export interface RepositoryProps {
    * @default false
    */
   readonly emptyOnDelete?: boolean;
+
+  /**
+   * The tag mutability setting for the repository.
+   *
+   * If this parameter is omitted, the default setting of MUTABLE will be used which will allow image tags to be overwritten.
+   * If IMMUTABLE is specified, all image tags within the repository will be immutable which will prevent them from being overwritten.
+   *
+   *  @default ImageTagMutability.MUTABLE
+   */
+  readonly imageTagMutability?: ImageTagMutability;
 }
 
 export interface RepositoryAttributes {
@@ -707,6 +731,7 @@ export class Repository extends RepositoryBase {
       imageScanningConfiguration: props.imageScanOnPush !== undefined ? { scanOnPush: props.imageScanOnPush } : undefined,
       encryptionConfiguration: this.parseEncryption(props),
       emptyOnDelete: props.emptyOnDelete,
+      imageTagMutability: props.imageTagMutability,
     });
     this._resource = resource;
 
