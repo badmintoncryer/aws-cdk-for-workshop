@@ -144,6 +144,18 @@ describe('repository', () => {
     });
   });
 
+  test('specify imageTagMutability', () => {
+    const stack = new cdk.Stack();
+  
+    new ecr.Repository(stack, 'MyRepository', {
+       imageTagMutability: ecr.ImageTagMutability.IMMUTABLE,
+    });
+  
+    Template.fromStack(stack).hasResourceProperties('AWS::ECR::Repository', {
+      ImageTagMutability: 'IMMUTABLE',
+    });
+  });
+
   test('A tag pattern cannot contain more than four wildcard characters', () => {
     // GIVEN
     const stack = new cdk.Stack();
